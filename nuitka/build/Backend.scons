@@ -524,8 +524,10 @@ if env.module_mode and python_sysflag_verbose:
 
 # Hack to make Scons use tempfile for gcc linking, to avoid line length limits,
 # which can make linking fail with many modules otherwise. Most needed on Windows,
-# but useful on other platforms too.
-if env.gcc_mode and (not env.clang_mode or env.zig_mode):
+# but useful on other platforms too. Clang accepts the same @response-file syntax
+# as gcc; excluding clang_mode here left macOS Apple Clang standalone builds
+# exposed to "Argument list too long" on the final link (see #4039 / #1777).
+if env.gcc_mode:
     makeGccUseLinkerFile(
         env=env,
         source_files=source_files,
